@@ -84,7 +84,7 @@ bool utility::is_routing_manager(const std::shared_ptr<configuration> &_config) 
         std::wstring its_lockfile(its_tmp_folder);
         std::string its_network(_config->get_network() + ".lck");
         its_lockfile.append(its_network.begin(), its_network.end());
-        lock_handle__ = CreateFileW(its_lockfile.c_str(), GENERIC_READ, 0, NULL, CREATE_NEW, 0, NULL);
+        lock_handle__ = CreateFileW(its_lockfile.c_str(), GENERIC_READ, 0, NULL, CREATE_ALWAYS, 0, NULL);
         if (lock_handle__ == INVALID_HANDLE_VALUE) {
             VSOMEIP_ERROR << __func__ << ": CreateFileW failed: " << std::hex << GetLastError();
         }

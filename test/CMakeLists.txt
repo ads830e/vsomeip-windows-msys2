@@ -11,6 +11,7 @@ include_directories(
     ${gtest_SOURCE_DIR}/include
 )
 
+
 set(TEST_LINK_LIBRARIES gtest)
 
 # Function to copy files into the build directory (or anywhere else)
@@ -69,6 +70,8 @@ endfunction()
 ##############################################################################
 if(NOT ${TESTS_BAT})
     set(TEST_CONFIGURATION configuration-test)
+
+	message(STATUS "GGGGGGGGGGGGGGGGGGGGGGGGGGGG")
 
     add_executable(${TEST_CONFIGURATION}
         configuration_tests/configuration-test.cpp
@@ -3076,6 +3079,11 @@ endif()
 # Add for every test a dependency to gtest
 ##############################################################################
 
+if (MSYS2MINGW64)
+
+
+else()
+
 if(NOT ${TESTS_BAT})
     add_dependencies(${TEST_CONFIGURATION} gtest)
     add_dependencies(${TEST_APPLICATION} gtest)
@@ -3146,6 +3154,8 @@ if(NOT ${TESTS_BAT})
 else()
     add_dependencies(${TEST_LOCAL_ROUTING_SERVICE} gtest)
     add_dependencies(${TEST_LOCAL_ROUTING_CLIENT} gtest)
+endif()
+
 endif()
 
 ##############################################################################

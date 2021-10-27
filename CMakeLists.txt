@@ -20,14 +20,6 @@ set (CMAKE_VERBOSE_MAKEFILE off)
 
 option(MSYS2MINGW64 "Build for Msys2 MinGW64." ON)
 
-if (NOT GTEST_ROOT)
-    if (DEFINED ENV{GTEST_ROOT})
-        set(GTEST_ROOT $ENV{GTEST_ROOT})
-    else()
-        set(GTEST_ROOT "n/a" CACHE STRING "Path to root folder of googletest. Must be set for building the tests.")
-    endif()
-endif()
-
 ###################################################################################################
 # see http://www.cmake.org/Wiki/CMake/Tutorials/How_to_create_a_ProjectConfig.cmake_file
 ###################################################################################################
@@ -99,10 +91,20 @@ if (MSYS2MINGW64)
 	list(APPEND OS_LIBS "ws2_32")
 	list(APPEND OS_LIBS "wininet")
 	list(APPEND OS_LIBS "wsock32")
+	find_package(GTest)
+	set(GTEST_ROOT ${GTest_DIR})
 endif(MSYS2MINGW64)
 
 endif (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
+
+if (NOT GTEST_ROOT)
+    if (DEFINED ENV{GTEST_ROOT})
+        set(GTEST_ROOT $ENV{GTEST_ROOT})
+    else()
+        set(GTEST_ROOT "n/a" CACHE STRING "Path to root folder of googletest. Must be set for building the tests.")
+    endif()
+endif()
 
 
 ################################################################################
@@ -160,6 +162,7 @@ endif ()
 
 # Threads
 find_package(Threads REQUIRED)
+
 
 # Boost
 find_package( Boost 1.55 COMPONENTS system thread filesystem REQUIRED )
@@ -654,7 +657,13 @@ if ("${BUILD_SHARED_LIBS}" STREQUAL "ON")
     set(BUILD_SHARED_LIBS OFF)
     set(BUILD_SHARED_LIBS_AUTOMATIC_OFF 1)
 endif()
+
+if (MSYS2MINGW64)
+#add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/gtest EXCLUDE_FROM_ALL)
+else()
 add_subdirectory(${GTEST_ROOT} ${CMAKE_CURRENT_BINARY_DIR}/gtest EXCLUDE_FROM_ALL)
+endif()
+
 if ("${BUILD_SHARED_LIBS_AUTOMATIC_OFF}" STREQUAL "1")
     set(BUILD_SHARED_LIBS ON)
     set(BUILD_SHARED_LIBS_AUTOMATIC_OFF 0)
